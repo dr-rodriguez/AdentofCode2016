@@ -105,6 +105,84 @@ for instruction in path:
     if found:
         break
 
+# Creating an image for fun
+# Adapted from https://www.reddit.com/r/adventofcode/comments/5fvo07/2016_day_1_visualization_of_the_path_taken/danjkmz/
+from PIL import Image
+import PIL.ImageOps
 
+# Get bounds
+maxx, minx, maxy, miny = -10, 10, -10, 10
+present = [0, 0]
+curr_direction = 0
+for instruction in path:
+    direction = instruction[0]
+    length = int(instruction[1:].strip())
 
+    if direction == 'R':
+        change = 1
+    else:
+        change = -1
 
+    curr_direction = (curr_direction + change) % 4
+
+    if curr_direction == 0:
+        ind = 0
+        sign = 1
+    elif curr_direction == 1:
+        ind = 1
+        sign = 1
+    elif curr_direction == 2:
+        ind = 0
+        sign = -1
+    elif curr_direction == 3:
+        ind = 1
+        sign = -1
+
+    for i in range(0, length):
+        present[ind] += sign
+        minx = min(present[1], minx)
+        maxx = max(present[1], maxx)
+        miny = min(present[0], miny)
+        maxy = max(present[0], maxy)
+
+# Start image
+x = maxx - minx + 1
+y = maxy - miny + 1
+img = Image.new('RGB', (x, y))
+data = img.load()
+
+# Populate image
+present = [0, 0]
+curr_direction = 0
+for instruction in path:
+    direction = instruction[0]
+    length = int(instruction[1:].strip())
+    print(direction, length)
+
+    if direction == 'R':
+        change = 1
+    else:
+        change = -1
+
+    curr_direction = (curr_direction + change) % 4
+    print(curr_direction)
+
+    if curr_direction == 0:
+        ind = 0
+        sign = 1
+    elif curr_direction == 1:
+        ind = 1
+        sign = 1
+    elif curr_direction == 2:
+        ind = 0
+        sign = -1
+    elif curr_direction == 3:
+        ind = 1
+        sign = -1
+
+    for i in range(0, length):
+        present[ind] += sign
+        data[present[1] - minx, present[0] - miny] = 255, 255, 255
+
+img = PIL.ImageOps.invert(img)  # invert colors
+img.save('images/day1_path.png')
