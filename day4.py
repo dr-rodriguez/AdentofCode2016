@@ -26,7 +26,7 @@ What is the sum of the sector IDs of the real rooms?
 
 import re
 from collections import Counter
-from operator import itemgetter
+from operator import itemgetter  # to get specific item in tuple (since Counter return tuples of letter & frequency)
 
 sum_ids = 0
 with open('data/day4_input.txt') as f:
