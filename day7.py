@@ -41,6 +41,8 @@ x = re.finditer(pattern, test)
 [s.group() for s in x]
 """
 
+# This is a more elegant regex that will find abba and not aaaa
+# abba_regex = r'(?!(\w)\1\1\1)(\w)(\w)\3\2'
 
 def check_TLS(string):
     pattern = r'([a-z])([a-z])\2\1'
