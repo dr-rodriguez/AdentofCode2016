@@ -64,4 +64,52 @@ while len(my_input) > 0:
 print(decompressed)
 print('Answer: {}'.format(len(decompressed)))
 
+"""
+--- Part Two ---
 
+Apparently, the file actually uses version two of the format.
+
+In version two, the only difference is that markers within decompressed data are decompressed. This, the
+documentation explains, provides much more substantial compression capabilities, allowing many-gigabyte files
+to be stored in only a few kilobytes.
+
+For example:
+
+(3x3)XYZ still becomes XYZXYZXYZ, as the decompressed section contains no markers.
+X(8x2)(3x3)ABCY becomes XABCABCABCABCABCABCY, because the decompressed data from the (8x2) marker is then further
+decompressed, thus triggering the (3x3) marker twice for a total of six ABC sequences.
+(27x12)(20x12)(13x14)(7x10)(1x12)A decompresses into a string of A repeated 241920 times.
+(25x3)(3x3)ABC(2x3)XY(5x2)PQRSTX(18x9)(3x2)TWO(5x7)SEVEN becomes 445 characters long.
+Unfortunately, the computer you brought probably doesn't have enough memory to actually decompress the file; you'll
+have to come up with another way to get its decompressed length.
+
+What is the decompressed length of the file using this improved format?
+"""
+
+# Brute force does not work, trying recursion
+def process_chunk(my_input):
+    pattern = r'\(\d+x\d+\)'
+    x = re.search(pattern, my_input)
+    if isinstance(x, type(None)) or my_input == '':
+        return len(my_input)
+
+    # Build answer value by looping over input until there are no more (
+    answer = 0
+    while '(' in my_input:
+        pattern = r'\(\d+x\d+\)'
+        x = re.search(pattern, my_input)
+        answer += x.start()  # in case there are leading characters before a (
+
+        regex = r'\((\d+)x(\d+)\)'
+        length, times = re.findall(regex, x.group())[0]
+        length, times = int(length), int(times)
+
+        answer += process_chunk(my_input[x.end():x.end() + length]) * times  # create and process each substring
+        my_input = my_input[x.end()+length:]  # trim input and send it back through the while loop
+
+    answer += len(my_input)
+
+    return answer
+
+answer = process_chunk(my_input)
+print('Answer: {}'.format(answer))
