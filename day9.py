@@ -87,6 +87,9 @@ What is the decompressed length of the file using this improved format?
 """
 
 # Brute force does not work, trying recursion
+# Earlier recursion strategies didn't work, ended up reading through solutions and this one helped:
+# https://www.reddit.com/r/adventofcode/comments/5hbygy/2016_day_9_solutions/daz279z/
+# The key thing I was missing was the while loop
 def process_chunk(my_input):
     pattern = r'\(\d+x\d+\)'
     x = re.search(pattern, my_input)
