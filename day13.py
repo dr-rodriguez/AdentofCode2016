@@ -45,12 +45,12 @@ Thus, reaching 7,4 would take a minimum of 11 steps (starting from your current 
 What is the fewest number of steps required for you to reach 31,39?
 """
 
-# My brute-force approach works for the test input, but not for mine.
-# Too many paths to consider and it keeps getting stuck on bad paths
+# My brute-force approach works for the test input (probably dumb luck), but not for the actual input.
+# Too many paths to consider and it keeps getting stuck on bad paths.
 
 # Looking through reddit this is another example of depth-first search or breadth-first search,
-# similar to Day 11, which I haven't yet solved
-# I kept some of my code attempts, but skip down to ====== for the solution
+# similar to Day 11, which I haven't yet solved.
+# I kept some of my code attempts, but skip down to ====== for the solution.
 
 my_input = 1362
 
@@ -162,38 +162,19 @@ for i in range(100):
         print('Adding {} {}'.format(x, y))
         path.append((x, y))
         avoid_dir = list()
-    # print(x, y, path)
 
-    if x < 0 or y < 0:
-        print('Outside building')
-        break
-
-    # loc = '{} {}'.format(x, y)
-    # if loc not in path_dict.keys():
-    #     path_dict[loc] = 1
-    # else:
-    #     path_dict[loc] += 1
-    #
-    # if path_dict[loc] > 4:  # stop repeating and go back one more
-    #     print('I keep reaching {}'.format(loc))
-    #     if (x, y) in bad_loc:
-    #         pass
-    #         #x, y = path.pop()
-    #     else:
-    #         bad_loc.append((x, y))
-    #     x, y = path.pop()
-    #     print('New values: {} {}'.format(x, y))
 
 # ==============================
 # Edited but mostly from reddit:
 # https://www.reddit.com/r/adventofcode/comments/5i1q0h/2016_day_13_solutions/db4qgz8/
-# Does not work in Python 3 due to dictionary keys being tuples
+# Original does not work in Python 3 due to dictionary keys being tuples, but now it works
 
 frontier = [(1, 1, 0)]
 explored = {}
+my_input = 1362
 
 def get_wall(tup):
-    # Check if there's a space or a wall
+    # Check if there's a space (True) or a wall (False)
     global my_input
     num = tup[0] * tup[0] + 3 * tup[0] + 2 * tup[0] * tup[1] +tup[1] + tup[1] * tup[1] + my_input
     return bin(num)[2:].count("1") % 2 == 0 and tup[0] >= 0 and tup[1] >= 0
@@ -203,16 +184,20 @@ def get_next(tup):
     cand = [(0,1), (0,-1), (1,0), (-1,0)]
     return [(x[0] + tup[0], x[1] + tup[1], tup[2] + 1) for x in cand if get_wall((x[0] + tup[0], x[1] + tup[1]))]
 
-# This is an example of a non-recursive depth-first-search (DFS) as opposed to a breadth-first-search
+# This is an example of a non-recursive depth-first-search (DFS; as opposed to a breadth-first-search)
 # The loop proceeds to empty out frontier by creating explored, which contains each location and how long it took to
 # reach it. Explored is filled out by going deep in each node and saving the best value.
 while len(frontier) > 0:
     # print(frontier)
     new = frontier.pop()
-    explored[(new[0], new[1])] = new[2]
-    frontier += [x for x in get_next(new) if not (x[0], x[1]) in explored or explored[(x[0], x[1])] > x[2]]
+    loc = '{} {}'.format(new[0], new[1])
+    explored[loc] = new[2]
+    frontier += [x for x in get_next(new) if not '{} {}'.format(x[0], x[1]) in explored
+                 or explored['{} {}'.format(x[0], x[1])] > x[2]]
+    # Note that frontier grows as new locations get discovered (ie, not in explored) or the previous explored location
+    # has a value larger than the current value (x[2])
 
-print(explored[(31, 39)])
+print(explored['31 39'])
 
 """
 --- Part Two ---
