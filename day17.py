@@ -70,12 +70,11 @@ def check_move(d, x, y, hash):
 
     return False
 
-# Setting up BFS
-my_input = 'kglvqrro'
+# Setting up A* search in the same fashion as Day 11
+my_input = 'qljzarfv'
 hash = md5(my_input.encode()).hexdigest()
 initial = ('', 0, 0)
 cost = {initial: 0}
-count = 0
 best = 99999
 longest = 0
 frontier = []
@@ -84,20 +83,13 @@ heapq.heappush(frontier, (0, initial))
 while frontier:
     _, current = heapq.heappop(frontier)
     path, x, y = current
-    # current = frontier.pop()
-    # path, (x, y) = current
 
     if x == 3 and y == 3:  # reach goal
-        # print(current)
-        cost[current] = len(path)
-        if count > 1000: break
         if len(path) <= best:
             best_path = current
         best = min(best, len(path))
         longest = max(longest, len(path))
-        count += 1
-        # Reset
-        path, x, y = '', 0, 0
+        path, x, y = '', 0, 0  # Reset
 
     hash = md5((my_input + path).encode()).hexdigest()
     # print(my_input+path, hash[:4])
@@ -121,9 +113,26 @@ while frontier:
         next = (new_path, new_x, new_y)
         # print(next)
         if next not in cost:
-            priority = len(new_path)
+            cost[next] = len(new_path)
+            priority = len(new_path)  # not really sure what priority does yet
             heapq.heappush(frontier, (priority, next))
-            #frontier.append((path, next))
 
 print(best, best_path)
 print('Longest: {}'.format(longest))
+
+"""
+--- Part Two ---
+
+You're curious how robust this security solution really is, and so you decide to find longer and longer paths
+which still provide access to the vault. You remember that paths always end the first time they reach the
+bottom-right room (that is, they can never pass through it, only end in it).
+
+For example:
+
+If your passcode were ihgpwlah, the longest path would take 370 steps.
+With kglvqrro, the longest path would be 492 steps long.
+With ulqzkmiv, the longest path would be 830 steps long.
+What is the length of the longest path that reaches the vault?
+"""
+
+# Solution above edited to add longest variable
