@@ -89,23 +89,32 @@ With the number of Elves given in your puzzle input, which Elf now gets all the 
 from math import floor
 
 my_input = 5
+# my_input = 3004953
+my_input = 100
 
 gifts = {s+1: 1 for s in range(my_input)}
-elf_list = [s for s in gifts.keys()]
 
 ind = 0
 while len(gifts) > 1:
     elf_list = [s for s in gifts.keys()]
     ind %= len(elf_list)
     elf = elf_list[ind]
-    # steal_ind = floor(len(elf_list) / 2) if len(elf_list) % 2 == 1 else floor(len(elf_list) / 2) + 1
     steal_ind = floor(len(elf_list) / 2) + ind
     steal_ind %= len(elf_list)
-    print(ind, steal_ind, elf_list)
     steal_elf = elf_list[steal_ind]
+    # print('Elf #{} ({} in {}) steals from #{} ({})'.format(elf, ind, elf_list, steal_elf, steal_ind))
+    # print('Gifts: {}'.format(gifts))
+    print('Elfs: {}'.format(list(gifts.keys())))
+    print('Values: {}'.format(list(gifts.values())))
+    x = list(gifts.keys())
+    print([x[i + 1] - x[i] for i in range(len(x) - 1)])
 
-    print(elf, steal_elf, gifts)
     gifts[elf] += gifts.pop(steal_elf)
     ind += 1
+    ind %= len(elf_list)
 
 print('Answer: {}'.format(gifts))
+# This takes far too long to run
+# This also breaks partway through since ind can be larger than elf_list
+# Apparently there is a pattern that can become evident if you run it for ~100
+
