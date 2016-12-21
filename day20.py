@@ -52,6 +52,7 @@ while not any(allpass):
             continue
 
 print('Answer: {}'.format(answer))
+# 14975795
 
 """
 --- Part Two ---
@@ -60,4 +61,16 @@ How many IPs are allowed by the blacklist?
 """
 
 maxIP = 4294967295
+count = 0
+for ip in range(answer, maxIP):
+    allpass = [False] * len(lines)
+    for i, line in enumerate(lines):
+        l, u = line[0], line[1]
+        allpass[i] = not l <= ip <= u
+        if not allpass[i]:
+            break
+    if all(allpass):
+        count += 1
 
+print('Answer: {}'.format(count))
+# Takes too long
