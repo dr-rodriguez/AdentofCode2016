@@ -22,3 +22,42 @@ Given the list of blocked IPs you retrieved from the firewall (your puzzle input
 is not blocked?
 """
 
+# my_input = """5-8
+# 0-2
+# 4-7"""
+with open('data/day20_input.txt','r') as f:
+    my_input = f.read()
+
+lines = my_input.strip().split('\n')
+lines = [(int(s.split('-')[0]), int(s.split('-')[1])) for s in lines]  # to sort by actual number and not string
+lines.sort(reverse=False)
+
+allpass = [False] * len(lines)
+answer = 0
+while not any(allpass):
+    for i, line in enumerate(lines):
+        l, u = line[0], line[1]
+
+        allpass[i] = not l <= answer <= u
+        # print('{} - ({}) - {} = {}'.format(l, answer, u, not l <= answer <= u))
+
+        if not allpass[i]:
+            if answer >= l:
+                answer = u + 1
+            else:
+                answer = min(answer, max(l - 1, 0))
+
+            allpass[i] = True
+        else:
+            continue
+
+print('Answer: {}'.format(answer))
+
+"""
+--- Part Two ---
+
+How many IPs are allowed by the blacklist?
+"""
+
+maxIP = 4294967295
+
