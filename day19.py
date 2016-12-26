@@ -87,34 +87,46 @@ With the number of Elves given in your puzzle input, which Elf now gets all the 
 """
 
 from math import floor
+import numpy as np
 
 my_input = 5
 # my_input = 3004953
-my_input = 100
+# my_input = 100
 
-gifts = {s+1: 1 for s in range(my_input)}
+def elf_circle2(my_input):
+    elf_list = [s+1 for s in range(my_input)]
 
-ind = 0
-while len(gifts) > 1:
-    elf_list = [s for s in gifts.keys()]
-    ind %= len(elf_list)
-    elf = elf_list[ind]
-    steal_ind = floor(len(elf_list) / 2) + ind
-    steal_ind %= len(elf_list)
-    steal_elf = elf_list[steal_ind]
-    # print('Elf #{} ({} in {}) steals from #{} ({})'.format(elf, ind, elf_list, steal_elf, steal_ind))
-    # print('Gifts: {}'.format(gifts))
-    print('Elfs: {}'.format(list(gifts.keys())))
-    print('Values: {}'.format(list(gifts.values())))
-    x = list(gifts.keys())
-    print([x[i + 1] - x[i] for i in range(len(x) - 1)])
+    ind = 0
+    # print('{} ({}): {}'.format(ind, elf_list[ind], elf_list))
+    while len(elf_list) > 1:
+        elf_curr = elf_list[ind]
+        steal_ind = floor(len(elf_list) / 2) + ind
+        steal_ind %= len(elf_list)
 
-    gifts[elf] += gifts.pop(steal_elf)
-    ind += 1
-    ind %= len(elf_list)
+        elf_list.pop(steal_ind)
+        ind = np.where(np.array(elf_list) == elf_curr)[0][0]
 
-print('Answer: {}'.format(gifts))
-# This takes far too long to run
-# This also breaks partway through since ind can be larger than elf_list
-# Apparently there is a pattern that can become evident if you run it for ~100
+        ind += 1
+        ind %= len(elf_list)
 
+        # print('{} ({}): {}'.format(ind, elf_list[ind], elf_list))
+
+    return elf_list
+
+# Finally got elf_circle2 to work
+
+# I can see a pattern!
+# Trying to replicate it
+
+# Pattern is hard to write, but this was on reddit.
+# https://www.reddit.com/r/adventofcode/comments/5j4lp1/2016_day_19_solutions/dbdobax/
+from math import log
+def part2(n):
+    p = 3**int(log(n-1, 3))
+    return n - p + max(n-2*p, 0)
+
+for i in range(5, 50):
+    winner = elf_circle2(i)[0]
+    print('{}: {} {}'.format(i, winner, part2(i)))
+
+print('Answer: {}'.format(part2(3004953)))
