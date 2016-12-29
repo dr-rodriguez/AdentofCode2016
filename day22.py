@@ -37,12 +37,16 @@ with open('data/day22_input.txt', 'r') as f:
 
 
 nodes = dict()
+max_x = 0
+node_map = dict()
 pattern = r'/dev/grid/node-x(\d+)-y(\d+)\s+(\d+)T\s+(\d+)T\s+(\d+)T\s+(\d+)%'
 for i, line in enumerate(my_input):
     print(line)
     x, y, size, used, avail, percent = re.findall(pattern, line)[0]
     x, y, size, used, avail = int(x), int(y), int(size), int(used), int(avail)
     nodes[i] = [x, y, size, used, avail]
+    node_map[(x,y)] = [used, avail]
+    max_x = max(max_x, x)
 
 
 def check_nodes(a, b):
@@ -148,3 +152,48 @@ be efficient:
 What is the fewest number of steps required to move your goal data to node-x0-y0?
 """
 
+# Plan 1:
+# Create a map with space available & used
+# Create function to check if nearby nodes have enough space
+# Create another function to get all valid node paths
+# Use DFS to path through all nodes
+
+# Decided against Plan 1
+
+# Plan 2:
+# Print out the map, solve by hand
+
+start = (37, 0)
+goal = (0, 0)
+empty = (17, 22)  # 92 size
+node_map[start]  # 70 used, 22 available
+
+# Pretty print
+for y in range(0, 25+1):
+    line = ''
+    for x in range(0, 37+1):
+        used, avail = node_map[(x,y)]
+        # line += '{}/{}\t'.format(x, y)
+        # line += '{}/{}\t'.format(used, avail)
+        size = used + avail
+        if used <= 92:
+            char = '.'
+        else:
+            char = '#'
+        if used == 0:
+            char = '_'
+        if x == 0 and y == 0:
+            char = '!'
+        if x == 37 and y == 0:
+            char = 'G'
+        line += char
+    print(line)
+
+# 17 to move empty to first column
+# 22 to move up to first row
+# 36 to go to penultimate column
+# From this setting, to move G one left and move the empty left of that takes: 5 moves
+# 36*5 to move G all the way to second column
+# +1 to move G to the !
+ans = 17 + 22 + 36 + 36*5 + 1
+print('Answer: {}'.format(ans))
